@@ -1,0 +1,142 @@
+<div class="min-h-screen bg-slate-950 p-10 font-sans">
+
+    <div
+        class="flex items-center justify-between mb-16 bg-white/5 p-6 rounded-[2rem] border border-white/10 backdrop-blur-xl top-24 z-40">
+        <div class="flex items-center gap-6 w-1/2">
+            <div class="relative w-full">
+                <input [(ngModel)]="searchQuery" (input)="onSearch()" type="text"
+                    placeholder="Search parks by name or city..."
+                    class="w-full bg-white/5 border border-white/10 p-4 pl-12 rounded-2xl focus:border-amber-500 outline-none transition-all text-white font-bold tracking-wide">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 opacity-50">🔍</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <span
+                class="text-amber-500 font-bold uppercase text-[10px] tracking-widest px-4 border-r border-white/10">Sort
+                Price:</span>
+            <select [(ngModel)]="sortBy" (change)="sortParks()"
+                class="bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none cursor-pointer focus:border-amber-500 transition-all min-w-[200px]">
+                <option class="bg-amber-700 " value="">Normal</option>
+                <option class="bg-amber-700 " value="lowToHigh">Low to High</option>
+                <option class="bg-amber-700 " value="highToLow">High to Low</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div *ngFor="let park of filteredParks" (click)="openDetails(park)"
+            class="group bg-gray-900/50 rounded-[2.5rem] overflow-hidden border border-white/5  transition-all duration-500 cursor-pointer shadow-2xl hover:-translate-y-2">
+            <div class="relative h-[400px]">
+                <img [src]="park.image"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/20 to-transparent opacity-90">
+                </div>
+
+                <div class="absolute bottom-8 left-8 right-8">
+                    <span
+                        class="bg-amber-500 text-white text-[10px] px-4 py-1.5 rounded-full font-black uppercase tracking-[0.2em] mb-4 inline-block shadow-lg shadow-amber-500/20">
+                        {{ park.category }}
+                    </span>
+                    <h3
+                        class="text-3xl font-black text-white leading-tight uppercase tracking-tight group-hover:text-amber-500 transition-colors">
+                        {{ park.name }}
+                    </h3>
+                    <div class="flex items-center justify-between mt-6 pt-6 border-t border-white/10">
+                        <div class="flex items-center gap-2">
+                            <span class="text-amber-500 text-xs font-black"></span>
+                            <span class="text-white/60 text-xs font-bold uppercase tracking-wider">{{ park.city
+                                }}</span>
+                        </div>
+                        <span class="text-2xl font-black text-white">₹{{ park.price }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="isDetailModalOpen && selectedPark"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-2xl p-6">
+        <div
+            class="bg-gray-950 border border-white/10 w-full max-w-4xl h-[85vh] rounded-[3rem] overflow-hidden relative flex flex-col shadow-[0_0_100px_rgba(245,158,11,0.1)]">
+
+            <button (click)="closeDetails()"
+                class="absolute top-8 right-8 z-50 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center border border-white/10 text-black font-black hover:bg-red-500 hover:text-white transition-all active:scale-95 cursor-pointer">✕</button>
+
+            <div class="flex-1 overflow-y-auto no-scrollbar scroll-smooth" onmousewheel="event.stopPropagation()">
+                <div class="h-[50vh] relative">
+                    <img [src]="selectedPark.image" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-950"></div>
+                </div>
+
+                <div class="p-12 -mt-24 relative z-10">
+                    <div class="flex items-end justify-between mb-8">
+                        <div>
+                            <span class="text-amber-500 font-black uppercase tracking-[0.3em] text-[10px] block mb-2">{{
+                                selectedPark.category }}</span>
+                            <h2 class="text-6xl font-black text-white uppercase leading-[0.9] tracking-tighter">{{
+                                selectedPark.name }}</h2>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-white/40 uppercase font-black tracking-widest mb-1">Starting
+                                Price</p>
+                            <span class="text-5xl font-black text-white">₹{{ selectedPark.price }}</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-12 pt-12 border-t border-white/10">
+                        <div class="space-y-6">
+                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Information</h4>
+                            <div class="flex items-center gap-4 bg-white/5 p-6 rounded-3xl border border-white/5">
+                                <span class="text-2xl">🏬</span>
+                                <div>
+                                    <p class="text-[10px] text-white/40 uppercase font-black tracking-widest">Location
+                                    </p>
+                                    <p class="text-white font-bold">{{ selectedPark.city }}</p>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Park Experience</h4>
+                            <p class="text-white font-bold leading-relaxed text-2xl tracking-tight italic border-l-4 border-amber-500 pl-6">
+                                "{{ selectedPark.description }}"
+                            </p>
+                        </div>
+
+                        <div class="col-span-2 space-y-8 pt-12 border-t border-white/10">
+                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Main Attractions</h4>
+                            <div class="grid grid-cols-3 gap-6">
+                                <div *ngFor="let ride of getRideImages(selectedPark.category)"
+                                    class="group/ride relative h-48 rounded-3xl overflow-hidden border border-white/10">
+                                    <img [src]="ride"
+                                        class="w-full h-full object-cover group-hover/ride:scale-110 transition-all duration-700">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-10 bg-gray-900/50 border-t border-white/10 backdrop-blur-xl">
+                <button (click)="bookNow(selectedPark)"
+                    class="w-1/2 bg-amber-500 hover:bg-amber-600 py-6 rounded-full font-black text-white text-xl uppercase tracking-[0.2em] shadow-2xl shadow-amber-500/30 transition-all active:scale-[0.98]">
+                    BOOK NOW
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>

@@ -1,0 +1,121 @@
+<div *ngIf="park" class="min-h-screen bg-slate-950 p-10 font-sans pb-40">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-center gap-10 mb-16">
+            <div class="w-1/3 h-64 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative group">
+                <img [src]="park.image"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-950 to-transparent opacity-60"></div>
+            </div>
+            <div>
+                <span class="text-amber-500 font-black uppercase tracking-[0.3em] text-[10px] block mb-2">{{
+                    park.category }}</span>
+                <h1 class="text-7xl font-black text-white uppercase leading-[0.8] tracking-tighter mb-4">{{ park.name }}
+                </h1>
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-4 text-white/50 font-bold uppercase tracking-widest text-xs">
+                        <span class="text-amber-500 font-black">📍</span> {{ park.city }}
+                    </div>
+                    <button routerLink="/explore"
+                        class="px-5 py-2 rounded-full border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all active:scale-95">
+                        Change Park
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-20">
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/10 backdrop-blur-xl">
+                <label class="text-amber-500 font-black uppercase text-[10px] tracking-widest mb-4 block">Visit
+                    Date</label>
+                <input type="date" [(ngModel)]="bookingForm.bookingDate" [min]="minDate"
+                    (click)="$any($event.target).showPicker()"
+                    class="w-full bg-white/5 border border-white/10 p-5 rounded-2xl focus:border-amber-500 outline-none transition-all text-white font-bold text-lg cursor-pointer">
+            </div>
+
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/10 backdrop-blur-xl">
+
+                <div>
+                    <label
+                        class="block text-white/40 text-[10px] font-black uppercase tracking-widest mb-2">Persons</label>
+                    <input type="number" [(ngModel)]="bookingForm.persons" min="1"
+                        class="w-full bg-slate-900/50 border border-white/10 rounded-2xl p-4 text-white font-bold focus:border-amber-500 outline-none transition-all">
+                </div>
+            </div>
+
+            <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/10 backdrop-blur-xl">
+                <label class="text-amber-500 font-black uppercase text-[10px] tracking-widest mb-4 block">Payment
+                    Method</label>
+                <select [(ngModel)]="bookingForm.paymentMethod"
+                    class="w-full bg-white/5 border border-white/10 p-5 rounded-2xl focus:border-amber-500 outline-none transition-all text-white font-bold text-lg cursor-pointer">
+                    <option class="bg-amber-700" value="Credit Card">Credit Card</option>
+                    <option class="bg-amber-700" value="Debit Card">Debit Card</option>
+                    <option class="bg-amber-700" value="UPI / QR Code">UPI / QR Code</option>
+                    <option class="bg-amber-700" value="Net Banking">Net Banking</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-10">
+            <h3 class="text-amber-500 font-black uppercase tracking-[0.4em] text-xs mb-10 text-center">Enhance Your
+                Experience (Optional Addons)</h3>
+            <div class="flex flex-wrap justify-center gap-10">
+                <div *ngFor="let addon of addonsList" (click)="toggleAddon(addon.id)"
+                    [ngClass]="bookingForm.addons.includes(addon.id) ? 'bg-amber-500 border-amber-500 h-[325px]' : 'bg-white/5 border-white/10 h-[250px] hover:h-[330px] hover:bg-white/10'"
+                    class="w-full md:w-[25vw] rounded-[2.5rem] border-2 border-dashed p-8 flex flex-col items-center text-center transition-all duration-500 overflow-hidden cursor-pointer group">
+                    <img [src]="addon.icon"
+                        class="h-20 w-20 object-contain mb-6 grayscale group-hover:grayscale-0 transition-all opacity-50 group-hover:opacity-100"
+                        [ngClass]="{'grayscale-0 opacity-100': bookingForm.addons.includes(addon.id)}">
+                    <h4 class="text-2xl font-black text-white uppercase tracking-tight mb-6">{{ addon.name }}</h4>
+                    <span class="px-4 py-1.5 rounded-full border border-white/20 text-white font-black text-lg mb-6">₹{{
+                        addon.price }}</span>
+                    <p
+                        class="text-white/40 text-sm leading-relaxed font-bold italic group-hover:text-white/80 transition-colors">
+                        {{ addon.desc }}
+                        <span
+                            class="block mt-1 text-[10px] text-amber-500 font-black tracking-widest uppercase">(Service
+                            by Thrill Trips)</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Billing Footer -->
+    <div class="fixed bottom-0 left-0 right-0 z-[60] bg-gray-950/80 backdrop-blur-3xl border-t border-white/10 p-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="flex items-center gap-10">
+                <div class="text-left">
+                    <p class="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Calculation</p>
+                    <p class="text-white/80 font-bold">₹{{ park.price }} Base + {{ bookingForm.addons.length }} Addons
+                    </p>
+                </div>
+                <div class="h-10 w-px bg-white/10"></div>
+                <div class="text-left">
+                    <p class="text-[10px] text-white/40 font-black uppercase tracking-widest mb-1">Total Bill</p>
+                    <p class="text-3xl font-black text-amber-500">₹{{ calculateTotal() }}</p>
+                </div>
+            </div>
+
+            <button (click)="onConfirm()"
+                class="w-1/2 md:w-auto bg-blue-600 hover:bg-blue-700 py-4 px-20 rounded-full font-black text-white text-xl uppercase tracking-[0.2em] shadow-2xl shadow-blue-600/30 transition-all active:scale-95">
+                Book
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* For Chrome, Safari and Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        appearance: none;
+        margin: 0;
+    }
+
+    /* For Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+</style>

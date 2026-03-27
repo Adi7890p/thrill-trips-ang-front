@@ -1,0 +1,223 @@
+<div class="min-h-screen bg-[#151623] text-white p-6 font-sans">
+    <div class="border-b-2 border-amber-500/30 flex justify-start mb-6 gap-2">
+        <div (click)="selectTab('parks')"
+            [ngClass]="selectedTab === 'parks' ? 'bg-amber-500 text-white shadow-lg' : 'text-blue-400 hover:text-white hover:bg-amber-500'"
+            class="p-4 font-bold cursor-pointer transition-all duration-300 flex justify-center items-center rounded-t-xl px-8 uppercase tracking-widest text-xs">
+            Manage Parks
+        </div>
+        <div (click)="selectTab('bookings')"
+            [ngClass]="selectedTab === 'bookings' ? 'bg-amber-500 text-white shadow-lg' : 'text-blue-400 hover:text-white hover:bg-amber-500'"
+            class="p-4 font-bold cursor-pointer transition-all duration-300 flex justify-center items-center rounded-t-xl px-8 uppercase tracking-widest text-xs">
+            Bookings
+        </div>
+        <div (click)="selectTab('admins')"
+            [ngClass]="selectedTab === 'admins' ? 'bg-amber-500 text-white shadow-lg' : 'text-blue-400 hover:text-white hover:bg-amber-500'"
+            class="p-4 font-bold cursor-pointer transition-all duration-300 flex justify-center items-center rounded-t-xl px-8 uppercase tracking-widest text-xs">
+            Manage Admins
+        </div>
+    </div>
+
+    <div class="flex justify-end mb-4 pr-4">
+        <button *ngIf="selectedTab === 'parks'" (click)="toggleAddModal()"
+            class="bg-green-600/90 hover:bg-green-500 text-white px-8 py-3 rounded-full font-black shadow-xl transition-all active:scale-95 flex items-center gap-2 text-xs">
+            <span>+</span> ADD PARK
+        </button>
+        <button *ngIf="selectedTab === 'admins'" (click)="toggleAdminModal()"
+            class="bg-blue-600/90 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-black shadow-xl transition-all active:scale-95 flex items-center gap-2 text-xs">
+            <span>+</span> ADD ADMIN
+        </button>
+    </div>
+
+    <div class="overflow-hidden rounded-2xl shadow-2xl border border-white/10 backdrop-blur-xl bg-gray-900/40">
+        <table *ngIf="selectedTab === 'parks'" class="w-full text-left border-collapse">
+            <thead>
+                <tr
+                    class="grid grid-cols-8 bg-amber-800 text-white font-black uppercase tracking-widest text-[10px] border-b border-white/10">
+                    <th class="p-5 flex justify-center text-center">ID</th>
+                    <th class="p-5 flex justify-center text-center">NAME</th>
+                    <th class="p-5 flex justify-center text-center">CATEGORY</th>
+                    <th class="p-5 flex justify-center text-center">IMAGE</th>
+                    <th class="p-5 flex justify-center text-center">CITY</th>
+                    <th class="p-5 flex justify-center text-center">PRICE</th>
+                    <th class="p-5 flex justify-center text-center">DESC</th>
+                    <th class="p-5 flex justify-center border-l border-white/10">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let park of parks"
+                    class="grid grid-cols-8 border-b border-white/5 hover:bg-white/5 transition-all text-xs items-center">
+                    <td class="p-4 text-center truncate opacity-70">#{{park._id}}</td>
+                    <td class="p-4 text-center font-bold">{{park.name}}</td>
+                    <td class="p-4 text-center opacity-80">{{park.category}}</td>
+                    <td class="p-4 flex justify-center">
+                        <img (click)="viewImage(park.image)" [src]="park.image"
+                            class="w-[10vw] h-[10vh] rounded-lg object-cover border border-white/20 hover:scale-105 hover:border-amber-500/50 transition-all cursor-pointer">
+                    </td>
+                    <td class="p-4 text-center">{{park.city}}</td>
+                    <td class="p-4 text-center text-amber-500 font-black">{{park.price}}</td>
+                    <td class="p-4 text-center truncate opacity-50">{{park.description}}</td>
+                    <td class="p-4 flex justify-center gap-2 border-l border-white/10">
+                        <button (click)="editPark(park._id)"
+                            class="bg-blue-600/20 text-blue-500 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all text-xs font-bold uppercase w-full">Edit</button>
+                        <button (click)="deletePark(park._id)"
+                            class="bg-red-600/20 text-red-500 p-2 rounded-lg hover:bg-red-600 hover:text-white transition-all text-xs font-bold uppercase w-full">Del</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table *ngIf="selectedTab === 'bookings'" class="w-full text-left border-collapse">
+            <thead>
+                <tr
+                    class="grid grid-cols-7 bg-blue-900 text-white font-black uppercase tracking-widest text-[10px] border-b border-white/10">
+                    <th class="p-5 flex justify-center text-center">USER EMAIL</th>
+                    <th class="p-5 flex justify-center text-center">PARK</th>
+                    <th class="p-5 flex justify-center text-center">DATE</th>
+                    <th class="p-5 flex justify-center text-center">TICKETS</th>
+                    <th class="p-5 flex justify-center text-center">TOTAL</th>
+                    <th class="p-5 flex justify-center text-center">PAYMENT</th>
+                    <th class="p-5 flex justify-center text-center">ADDONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let booking of bookings"
+                    class="grid grid-cols-7 border-b border-white/5 hover:bg-white/5 items-center text-[10px] py-2">
+                    <td class="p-4 text-center font-bold text-blue-400 truncate"
+                        [title]="booking.userEmail || booking.userId">
+                        {{ booking.userEmail || booking.userId }}
+                    </td>
+                    <td class="p-4 text-center font-black uppercase text-amber-500">{{booking.parkName}}</td>
+                    <td class="p-4 text-center font-bold text-white/80">{{booking.bookingDate}}</td>
+                    <td class="p-4 text-center font-black">{{booking.persons}} HEADS</td>
+                    <td class="p-4 text-center text-green-400 font-black text-xs">₹{{booking.totalAmount}}</td>
+                    <td class="p-4 text-center">
+                        <span
+                            class="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full font-black text-[8px] uppercase tracking-widest border border-blue-500/20">
+                            {{ booking.paymentMethod || 'Online' }}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center font-bold text-amber-500 uppercase text-[8px]">
+                        {{ booking.addons && booking.addons.length > 0 ? booking.addons.join(' / ') : 'None' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div *ngIf="selectedTab === 'admins'" class=" ">
+            <table class="w-full text-left border-collapse rounded-2xl overflow-hidden shadow-2xl">
+                <thead class="bg-indigo-950 text-white uppercase font-black tracking-widest text-xs">
+                    <tr class="grid grid-cols-2 p-6 border-b border-white/10">
+                        <th class="flex justify-start pl-10">ADMIN USERNAME</th>
+                        <th class="flex justify-end pr-10">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-gray-900/40">
+                    <tr *ngFor="let admin of admins"
+                        class="grid grid-cols-2 items-center p-6 border-b border-white/5 hover:bg-white/5 transition-all">
+                        <td class="font-bold text-blue-400 pl-10">{{admin.unm}}</td>
+                        <td class="flex justify-end pr-10">
+                            <button (click)="deleteAdmin(admin.unm)"
+                                class="bg-red-500/10 text-red-500 px-8 py-3 rounded-full hover:bg-red-600 hover:text-white transition-all font-black uppercase text-xs tracking-widest shadow-lg active:scale-95">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isAddModalOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+    <div class="bg-gray-900 border border-white/10 w-full max-w-5xl rounded-[40px] p-10 shadow-2xl">
+        <h2 class="text-xl font-black text-amber-500 mb-8 uppercase tracking-widest text-center">{{ selectedParkId ?
+            'EDIT PARK' : 'ADD NEW PARK' }}</h2>
+        <div class="grid grid-cols-3 gap-6">
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Park Name</label>
+                <input [(ngModel)]="parkForm.name" placeholder="Enter park name"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none transition-all text-sm">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Category</label>
+                <select [(ngModel)]="parkForm.category"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none transition-all text-sm appearance-none cursor-pointer">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Amusement Park" class="bg-gray-900 text-white">Amusement Park</option>
+                    <option value="Waterpark" class="bg-gray-900 text-white">Waterpark</option>
+                    <option value="Theme Park" class="bg-gray-900 text-white">Theme Park</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Location
+                    (City)</label>
+                <input [(ngModel)]="parkForm.city" placeholder="e.g. New York"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none transition-all text-sm">
+            </div>
+
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Price (Rs.)</label>
+                <input [(ngModel)]="parkForm.price" type="number" placeholder="0.00"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none transition-all text-sm">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Park Image</label>
+                <div (click)="fileInput.click()"
+                    class="bg-white/5 border-2 border-dashed border-white/20 p-4 rounded-xl hover:border-amber-500 transition-all cursor-pointer flex items-center justify-center h-[54px]">
+                    <span class="text-[10px] text-gray-400 font-black uppercase tracking-widest">{{ parkForm.image ?
+                        'CHANGE IMAGE ✓' : 'UPLOAD IMAGE' }}</span>
+                </div>
+                <input #fileInput type="file" (change)="onFileSelected($event)" class="hidden" accept="image/*">
+            </div>
+            <div *ngIf="parkForm.image" class="flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Preview</label>
+                <div class="relative w-full h-[54px] rounded-xl overflow-hidden border border-white/20">
+                    <img [src]="parkForm.image" class="w-full h-full object-cover">
+                </div>
+            </div>
+
+            <div class="col-span-3 flex flex-col gap-1">
+                <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Short
+                    Description</label>
+                <textarea [(ngModel)]="parkForm.description" placeholder="Describe the park experience..." rows="2"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-amber-500 outline-none transition-all text-sm"></textarea>
+            </div>
+        </div>
+        <div class="flex gap-4 mt-8 justify-center">
+            <button (click)="addPark()"
+                class="w-1/3 bg-amber-500 py-4 rounded-full font-black text-white hover:bg-amber-600 transition-all shadow-xl shadow-amber-500/20 text-xs text-center uppercase tracking-widest">{{
+                selectedParkId ? 'UPDATE PARK' : 'SAVE PARK' }}</button>
+            <button (click)="toggleAddModal()"
+                class="w-1/4 bg-white/5 py-4 rounded-full font-black text-gray-400 hover:bg-white/10 transition-all border border-white/5 text-xs text-center">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isAdminModalOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+    <div class="bg-gray-900 border border-white/10 w-full max-w-md rounded-[40px] p-12 shadow-2xl">
+        <h2 class="text-2xl font-black text-blue-500 mb-8 uppercase tracking-widest text-center">ADD NEW ADMIN</h2>
+        <div class="flex flex-col gap-6">
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-blue-400 font-black uppercase ml-2 tracking-widest">Admin
+                    Username</label>
+                <input [(ngModel)]="adminForm.unm" placeholder="Enter username"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-blue-500 outline-none transition-all text-sm">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-[10px] text-blue-400 font-black uppercase ml-2 tracking-widest">Security
+                    Password</label>
+                <input [(ngModel)]="adminForm.password" type="password" placeholder="••••••••"
+                    class="bg-white/5 border border-white/10 p-4 rounded-xl focus:border-blue-500 outline-none transition-all text-sm">
+            </div>
+        </div>
+        <div class="flex gap-4 mt-10">
+            <button (click)="addAdmin()"
+                class="w-2/3 bg-blue-600 py-4 rounded-full font-black text-white hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 text-xs text-center uppercase tracking-widest">SAVE
+                ADMIN</button>
+            <button (click)="toggleAdminModal()"
+                class="w-1/3 bg-white/5 py-4 rounded-full font-black text-gray-400 hover:bg-white/10 transition-all border border-white/5 text-xs text-center uppercase">EXIT</button>
+        </div>
+    </div>
+</div>
