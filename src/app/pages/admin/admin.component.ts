@@ -42,7 +42,10 @@ export class AdminComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+
+
   }
+
 
   loadData() {
     if (this.selectedTab === 'parks') {

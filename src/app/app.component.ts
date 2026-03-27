@@ -65,7 +65,9 @@ export class AppComponent implements OnInit {
 
   getRouteState(outlet: any) {
     if (this.isFirstLoad && outlet.isActivated) {
-      this.isFirstLoad = false;
+      setTimeout(() => {
+        this.isFirstLoad = false;
+      }, 0);
       return null;
     }
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
