@@ -28,6 +28,8 @@ export class AdminComponent implements OnInit {
   adminForm = { unm: '', password: '' };
   selectedParkId: string | null = null;
   selectedAdminUnm: string | null = null;
+  selectedImageFile: File | null = null;
+  selectedImagePreview: string | null = null;
 
   ngOnInit() {
     this.loadData();
@@ -36,14 +38,13 @@ export class AdminComponent implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.parkForm.image = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      this.selectedImageFile = file;
+      this.selectedImagePreview = URL.createObjectURL(file);
     }
+  }
 
-
+  getImageUrl(imagePath: string): string {
+    return this.thrillService.getImageUrl(imagePath);
   }
 
 
@@ -66,6 +67,8 @@ export class AdminComponent implements OnInit {
     this.isAddModalOpen = !this.isAddModalOpen;
     if (!this.isAddModalOpen) {
       this.selectedParkId = null;
+      this.selectedImageFile = null;
+      this.selectedImagePreview = null;
       this.parkForm = { name: '', city: '', category: '', price: 0, description: '', image: '' };
     }
   }
@@ -97,20 +100,37 @@ export class AdminComponent implements OnInit {
   }
 
   addPark() {
-    const { name, city, category, price, description, image } = this.parkForm;
-    if (!name || !city || !category || !price || !description || !image) {
-      this.toastService.show('Please fill in all fields and upload an image!', 'error');
+    const { name, city, category, price, description } = this.parkForm;
+    if (!name || !city || !category || !price || !description) {
+      this.toastService.show('Please fill in all fields!', 'error');
+      return;
+    }
+    if (!this.selectedParkId && !this.selectedImageFile) {
+      this.toastService.show('Please upload an image!', 'error');
       return;
     }
 
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('city', city);
+    formData.append('category', category);
+    formData.append('price', price.toString());
+    formData.append('description', description);
+    if (this.selectedImageFile) {
+      formData.append('image', this.selectedImageFile);
+    } else if (this.parkForm.image) {
+      // keep existing image path on edit with no new file
+      formData.append('existingImage', this.parkForm.image);
+    }
+
     if (this.selectedParkId) {
-      this.thrillService.updatePark(this.selectedParkId, this.parkForm).subscribe(() => {
+      this.thrillService.updatePark(this.selectedParkId, formData).subscribe(() => {
         this.toastService.show('Park updated successfully!', 'success');
         this.toggleAddModal();
         this.loadData();
       });
     } else {
-      this.thrillService.addPark(this.parkForm).subscribe(() => {
+      this.thrillService.addPark(formData).subscribe(() => {
         this.toastService.show('Park added successfully!', 'success');
         this.toggleAddModal();
         this.loadData();

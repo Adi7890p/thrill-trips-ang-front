@@ -28,7 +28,7 @@
         <div *ngFor="let park of filteredParks" (click)="openDetails(park)"
             class="group bg-gray-900/50 rounded-[2.5rem] overflow-hidden border border-white/5  transition-all duration-500 cursor-pointer shadow-2xl hover:-translate-y-2">
             <div class="relative h-[400px]">
-                <img [src]="park.image"
+                <img [src]="getImageUrl(park.image)"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/20 to-transparent opacity-90">
                 </div>
@@ -65,7 +65,7 @@
 
             <div class="flex-1 overflow-y-auto no-scrollbar scroll-smooth" onmousewheel="event.stopPropagation()">
                 <div class="h-[50vh] relative">
-                    <img [src]="selectedPark.image" class="w-full h-full object-cover">
+                    <img [src]="getImageUrl(selectedPark.image)" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-b from-transparent to-gray-950"></div>
                 </div>
 
@@ -99,20 +99,24 @@
                         </div>
 
                         <div class="space-y-6">
-                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Park Experience</h4>
-                            <p class="text-white font-bold leading-relaxed text-2xl tracking-tight italic border-l-4 border-amber-500 pl-6">
+                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Park Experience
+                            </h4>
+                            <p
+                                class="text-white font-bold leading-relaxed text-2xl tracking-tight italic border-l-4 border-amber-500 pl-6">
                                 "{{ selectedPark.description }}"
                             </p>
                         </div>
 
                         <div class="col-span-2 space-y-8 pt-12 border-t border-white/10">
-                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Main Attractions</h4>
+                            <h4 class="text-amber-500 font-black uppercase tracking-widest text-[10px]">Main Attractions
+                            </h4>
                             <div class="grid grid-cols-3 gap-6">
                                 <div *ngFor="let ride of getRideImages(selectedPark.category)"
                                     class="group/ride relative h-48 rounded-3xl overflow-hidden border border-white/10">
                                     <img [src]="ride"
                                         class="w-full h-full object-cover group-hover/ride:scale-110 transition-all duration-700">
-                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent">
+                                    </div>
                                 </div>
                             </div>
                         </div>

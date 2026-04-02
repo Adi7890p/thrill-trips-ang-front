@@ -22,6 +22,10 @@ export class ExploreComponent implements OnInit {
   searchQuery: string = '';
   sortBy: string = '';
 
+  getImageUrl(path: string) {
+    return this.thrillSrv.getImageUrl(path);
+  }
+
   isDetailModalOpen: boolean = false;
   selectedPark: any = null;
 

@@ -200,6 +200,7 @@
     background: rgb(234, 143, 68);
     backdrop-filter: blur(8vw);
     will-change: transform, opacity;
+   
 }
 
 .ride h6 {

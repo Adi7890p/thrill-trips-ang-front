@@ -7,8 +7,17 @@ import { WebService } from './web.service';
 export class ThrillService {
 
   private webSrv = inject(WebService);
+  private storageUrl = 'http://localhost:3000';
 
   constructor() { }
+
+  getImageUrl(imagePath: string): string {
+    if (!imagePath) return 'assets/placeholder.jpg';
+    if (imagePath.startsWith('blob:')) return imagePath;
+    if (imagePath.startsWith('http')) return imagePath;
+    if (imagePath.startsWith('/uploads')) return this.storageUrl + imagePath;
+    return imagePath;
+  }
 
   signup(data: any) {
     return this.webSrv.post('auth/signup', data);
@@ -58,16 +67,17 @@ export class ThrillService {
     return this.webSrv.post('park/search', { query });
   }
 
-  addPark(data: any) {
-    return this.webSrv.post('park/add-park', data);
+  addPark(formData: FormData) {
+    return this.webSrv.postForm('park/add-park', formData);
   }
 
   deletePark(id: string) {
     return this.webSrv.post('park/delete-park', { id });
   }
 
-  updatePark(id: string, data: any) {
-    return this.webSrv.post('park/update-park', { id, ...data });
+  updatePark(id: string, formData: FormData) {
+    formData.append('id', id);
+    return this.webSrv.postForm('park/update-park', formData);
   }
 
   getAllBookings() {

@@ -15,4 +15,7 @@ export class WebService {
     return this.http.post(`${this.ROOT_URL}/${url}`, payload);
   }
 
-}
+  postForm(url: string, formData: FormData) {
+    return this.http.post(`${this.ROOT_URL}/${url}`, formData);
+  }
+}

@@ -50,7 +50,7 @@
                     <td class="p-4 text-center font-bold">{{park.name}}</td>
                     <td class="p-4 text-center opacity-80">{{park.category}}</td>
                     <td class="p-4 flex justify-center">
-                        <img (click)="viewImage(park.image)" [src]="park.image"
+                        <img (click)="viewImage(getImageUrl(park.image))" [src]="getImageUrl(park.image)"
                             class="w-[10vw] h-[10vh] rounded-lg object-cover border border-white/20 hover:scale-105 hover:border-amber-500/50 transition-all cursor-pointer">
                     </td>
                     <td class="p-4 text-center">{{park.city}}</td>
@@ -165,15 +165,15 @@
                 <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Park Image</label>
                 <div (click)="fileInput.click()"
                     class="bg-white/5 border-2 border-dashed border-white/20 p-4 rounded-xl hover:border-amber-500 transition-all cursor-pointer flex items-center justify-center h-[54px]">
-                    <span class="text-[10px] text-gray-400 font-black uppercase tracking-widest">{{ parkForm.image ?
-                        'CHANGE IMAGE ✓' : 'UPLOAD IMAGE' }}</span>
+                    <span class="text-[10px] text-gray-400 font-black uppercase tracking-widest">{{ selectedImageFile ?
+                        'CHANGED ✓' : (parkForm.image ? 'CHANGE IMAGE ✓' : 'UPLOAD IMAGE') }}</span>
                 </div>
                 <input #fileInput type="file" (change)="onFileSelected($event)" class="hidden" accept="image/*">
             </div>
-            <div *ngIf="parkForm.image" class="flex flex-col gap-1">
+            <div *ngIf="selectedImagePreview || parkForm.image" class="flex flex-col gap-1">
                 <label class="text-[10px] text-amber-500 font-black uppercase ml-2 tracking-widest">Preview</label>
                 <div class="relative w-full h-[54px] rounded-xl overflow-hidden border border-white/20">
-                    <img [src]="parkForm.image" class="w-full h-full object-cover">
+                    <img [src]="selectedImagePreview || getImageUrl(parkForm.image)" class="w-full h-full object-cover">
                 </div>
             </div>
 

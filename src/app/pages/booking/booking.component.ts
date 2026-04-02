@@ -61,12 +61,17 @@ export class BookingComponent implements OnInit {
 
   calculateTotal(): number {
     if (!this.park) return 0;
-    let total = Number(this.park.price) * this.bookingForm.persons;
+    const persons = Number(this.bookingForm.persons) > 0 ? Number(this.bookingForm.persons) : 1;
+    let total = Number(this.park.price) * persons;
     this.bookingForm.addons.forEach((id: string) => {
       const addon = this.addonsList.find(a => a.id === id);
-      if (addon) total += addon.price;
+      if (addon) total += addon.price * persons;
     });
     return total;
+  }
+
+  getImageUrl(path: string) {
+    return this.thrillSrv.getImageUrl(path);
   }
 
   onConfirm() {
@@ -85,7 +90,7 @@ export class BookingComponent implements OnInit {
       parkName: this.park.name,
       parkImage: this.park.image,
       bookingDate: this.bookingForm.bookingDate,
-      persons: this.bookingForm.persons,
+      persons: Number(this.bookingForm.persons) > 0 ? Number(this.bookingForm.persons) : 1,
       totalAmount: Number(this.calculateTotal()),
       paymentMethod: this.bookingForm.paymentMethod,
       addons: this.bookingForm.addons

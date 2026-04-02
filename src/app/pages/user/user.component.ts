@@ -41,6 +41,10 @@ export class UserComponent implements OnInit {
     });
   }
 
+  getImageUrl(path: string) {
+    return this.thrillSrv.getImageUrl(path);
+  }
+
   getStatus(dateStr: string): 'Pending' | 'Completed' {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -73,6 +77,17 @@ export class UserComponent implements OnInit {
       return;
     }
     this.selectedBooking = JSON.parse(JSON.stringify(booking));
+
+    if (!this.selectedBooking.parkPrice) {
+      let addonTotal = 0;
+      this.selectedBooking.addons.forEach((id: string) => {
+        const addon = this.addonsList.find(a => a.id === id);
+        if (addon) addonTotal += addon.price;
+      });
+      const currentPersons = Number(this.selectedBooking.persons) || 1;
+      this.selectedBooking.parkPrice = (Number(this.selectedBooking.totalAmount) - (addonTotal * currentPersons)) / currentPersons;
+    }
+
     this.isEditModalOpen = true;
   }
 
@@ -87,16 +102,18 @@ export class UserComponent implements OnInit {
   }
 
   recalculateEditTotal() {
-    const basePrice = 800;
-    let total = basePrice * this.selectedBooking.persons;
+    const basePrice = Number(this.selectedBooking.parkPrice) || 800;
+    const persons = Number(this.selectedBooking.persons) > 0 ? Number(this.selectedBooking.persons) : 1;
+    let total = basePrice * persons;
     this.selectedBooking.addons.forEach((id: string) => {
       const addon = this.addonsList.find(a => a.id === id);
-      if (addon) total += addon.price;
+      if (addon) total += addon.price * persons;
     });
     this.selectedBooking.totalAmount = total;
   }
 
   updateBooking() {
+    this.selectedBooking.persons = Number(this.selectedBooking.persons) > 0 ? Number(this.selectedBooking.persons) : 1;
     this.recalculateEditTotal();
     this.thrillSrv.updateBooking(this.selectedBooking._id, this.selectedBooking).subscribe({
       next: () => {
@@ -139,7 +156,8 @@ export class UserComponent implements OnInit {
 
     if (booking.parkImage) {
       try {
-        doc.addImage(booking.parkImage, 'JPEG', 20, y, 170, 80);
+        const fullImageUrl = this.getImageUrl(booking.parkImage);
+        doc.addImage(fullImageUrl, 'JPEG', 20, y, 170, 80);
         y += 90;
       } catch (e) { y += 10; }
     }
