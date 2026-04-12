@@ -7,7 +7,7 @@ import { WebService } from './web.service';
 export class ThrillService {
 
   private webSrv = inject(WebService);
-  private storageUrl = 'https://nodejs-production-8434.up.railway.app';
+  private storageUrl = 'https://ang.adityakuril.me';
 
   constructor() { }
 
